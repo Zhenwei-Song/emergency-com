@@ -1,0 +1,106 @@
+/*
+ * @Author: Zhenwei Song zhenwei.song@qq.com
+ * @Date: 2024-06-04 15:08:16
+ * @LastEditors: Zhenwei Song zhenwei_song@foxmail.com
+ * @LastEditTime: 2024-11-14 18:48:12
+ * @FilePath: \emergency com 20241114V1.5\MiddleWares\my_uart.h
+ * @Description: 仅供学习交流使用
+ * Copyright (c) 2024 by Zhenwei Song, All Rights Reserved.
+ */
+#ifndef __MY_UART_H
+#define __MY_UART_H
+
+#include "board-config.h"
+#include "stm8l15x.h"
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+
+// #define USART_DEBUG
+
+#if defined USING_USART3
+#define MY_USART USART3
+#define MY_USART_PORT GPIOG
+#define MY_USART_CLK CLK_Peripheral_USART3
+#define MY_USART_RxPin GPIO_Pin_0
+#define MY_USART_TxPin GPIO_Pin_1
+#elif defined USING_USART0 // 有问题
+#define MY_USART USART0
+#define MY_USART_PORT GPIOH
+#define MY_USART_CLK CLK_Peripheral_USART0
+#define MY_USART_RxPin GPIO_Pin_4
+#define MY_USART_TxPin GPIO_Pin_5
+#else
+#define MY_USART USART2
+#define MY_USART_PORT GPIOH
+#define MY_USART_CLK CLK_Peripheral_USART2
+#define MY_USART_RxPin GPIO_Pin_4
+#define MY_USART_TxPin GPIO_Pin_5
+#endif
+
+// extern uint8_t UartMessage[BUFFER_SIZE];
+#define UART_BUFFER_SIZE 255
+
+extern uint32_t TIDSlot_time;
+
+extern bool PCTL_Location_Flag;
+extern bool PCTL_GEO_Flag;
+extern bool PCTL_DMR_Flag;
+extern bool PCTL_HeadBoard_Flag;
+extern bool PCTL_5G_Flag;
+extern bool PCTL_Adhoc_Flag;
+
+extern bool uart_valid_flag;
+extern volatile uart_recv_msg uart_recv_msg_type;
+
+extern uint8_t UART_Command_Num; // 命令
+extern uint8_t uart_recv_buffer[UART_BUFFER_SIZE];
+
+typedef enum {
+    P,
+    A_V,
+    A_P,
+    A_M,
+    A_L,
+    T_0,
+    T_2,
+    C_Emergency,
+    C_Controller,
+    C_Terminal,
+    C_Sleep,
+    C_ID,
+    C_TIDSlot,
+    EMP
+} uart_recv_msg;
+
+void my_uart_init(void);
+void my_uart_send_full_message(uint8_t *str);
+/* -------------------------------------------------------------------------- */
+/*                                   上位机->模块                               */
+/* -------------------------------------------------------------------------- */
+void process_p_frame(const uint8_t *frame_data);
+void process_a_frame(const uint8_t *frame_data);
+void process_t_frame_T0(const uint8_t *frame_data);
+void process_t_frame_T2(const uint8_t *frame_data);
+void process_c_frame_emr(void);
+void process_b_frame(const uint8_t *frame_data);
+/* -------------------------------------------------------------------------- */
+/*                                   模块->上位机                                  */
+/* -------------------------------------------------------------------------- */
+void uart_send_P(void);
+void uart_send_V(float version);
+void uart_send_M(void);
+void uart_send_L(void);
+void uart_send_R_T0_tml(uint8_t msg);
+void uart_send_R_T2_tml(uint8_t msg);
+void uart_send_R_T2_Response_tml(uint8_t msg);
+void uart_send_R_ctler_emer(uint8_t msg);
+void uart_send_R_ctler_normal(uint8_t msg);
+void uart_send_C_Off(void);
+void uart_send_C_Reset(void);
+void uart_send_BOK(void);
+void uart_send_BError(void);
+
+void uart_message_receive(void);
+
+#endif
