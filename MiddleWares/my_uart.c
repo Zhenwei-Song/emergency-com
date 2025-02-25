@@ -2,8 +2,8 @@
  * @Author: Zhenwei Song zhenwei.song@qq.com
  * @Date: 2024-06-05 10:51:06
  * @LastEditors: Zhenwei Song zhenwei_song@foxmail.com
- * @LastEditTime: 2025-01-06 15:48:00
- * @FilePath: \emergency com 20250106V1.9\MiddleWares\my_uart.c
+ * @LastEditTime: 2025-02-20 15:37:10
+ * @FilePath: \emergency com for git\MiddleWares\my_uart.c
  * @Description: 仅供学习交流使用
  * Copyright (c) 2024 by Zhenwei Song, All Rights Reserved.
  */
@@ -15,12 +15,12 @@
 #include "radio_manage.h"
 #include "timer.h"
 
-bool PCTL_Location_Flag = false;
-bool PCTL_GEO_Flag = false;
-bool PCTL_DMR_Flag = false;
-bool PCTL_HeadBoard_Flag = false;
-bool PCTL_5G_Flag = false;
-bool PCTL_Adhoc_Flag = false;
+// bool PCTL_Location_Flag = false;
+// bool PCTL_GEO_Flag = false;
+// bool PCTL_DMR_Flag = false;
+// bool PCTL_HeadBoard_Flag = false;
+// bool PCTL_5G_Flag = false;
+// bool PCTL_Adhoc_Flag = false;
 
 // uint8_t UartMessage[UART_REC_BUFFER_SIZE] = {0};
 uint8_t UART_Command_Num = 0; // 命令
@@ -160,6 +160,7 @@ static void my_uart_send_message_block(uint8_t *str, int len)
 void my_uart_send_full_message(uint8_t *str)
 {
     my_uart_send_message_block(str, strlen((char const *)str));
+    message_green_led(); // 闪灯
 }
 
 /* -------------------------------------------------------------------------- */
@@ -279,7 +280,6 @@ void uart_send_L(void)
 {
     uint8_t message[10];
     message[0] = 'L';
-    Energy_out = Energy_out + BAT_CORRECTED;
     if (Energy_out >= 10) {
         sprintf((char *)message + 1, "%.1f", Energy_out);
         message[5] = 'V';
@@ -316,7 +316,6 @@ void uart_send_ID(void)
  */
 void uart_send_R_T0_tml(uint8_t msg)
 {
-    LED_G_Bat_On;
     uint8_t msg_buf[6];
     if (msg / 10 == 0) {
         msg_buf[0] = 'R';
@@ -330,7 +329,6 @@ void uart_send_R_T0_tml(uint8_t msg)
         sprintf(msg_buf + 2, "%d", msg);
     }
     my_uart_send_full_message(msg_buf);
-    LED_G_Bat_Off;
 }
 
 /**
@@ -340,7 +338,6 @@ void uart_send_R_T0_tml(uint8_t msg)
  */
 void uart_send_R_T2_tml(uint8_t msg)
 {
-    LED_G_Bat_On;
     uint8_t temp_msg;
     temp_msg = msg - RADIO_CMD_T2_RANGE_MIN;
     uint8_t msg_buf[6];
@@ -356,7 +353,6 @@ void uart_send_R_T2_tml(uint8_t msg)
         sprintf(msg_buf + 2, "%d", temp_msg);
     }
     my_uart_send_full_message(msg_buf);
-    LED_G_Bat_Off;
 }
 
 /**
@@ -366,7 +362,6 @@ void uart_send_R_T2_tml(uint8_t msg)
  */
 void uart_send_R_T2_Response_tml(uint8_t msg)
 {
-    LED_G_Bat_On;
     uint8_t temp_msg;
     temp_msg = msg - RADIO_T2_RESPONSE_RANGE_MIN;
     uint8_t msg_buf[6];
@@ -382,7 +377,6 @@ void uart_send_R_T2_Response_tml(uint8_t msg)
         sprintf(msg_buf + 2, "%d", temp_msg);
     }
     my_uart_send_full_message(msg_buf);
-    LED_G_Bat_Off;
 }
 
 /**
@@ -392,7 +386,6 @@ void uart_send_R_T2_Response_tml(uint8_t msg)
  */
 void uart_send_R_ctler_emer(uint8_t msg)
 {
-    LED_G_Bat_On;
     uint8_t id;
     uint8_t msg_buf[6];
     id = msg - RADIO_MAYDAY_RANGE_MIN;
@@ -408,7 +401,6 @@ void uart_send_R_ctler_emer(uint8_t msg)
         sprintf(msg_buf + 2, "%d", id);
     }
     my_uart_send_full_message(msg_buf);
-    LED_G_Bat_Off;
 }
 
 /**
@@ -418,7 +410,6 @@ void uart_send_R_ctler_emer(uint8_t msg)
  */
 void uart_send_R_ctler_normal(uint8_t msg)
 {
-    LED_G_Bat_On;
     uint8_t id;
     uint8_t msg_buf[6];
     id = msg - RADIO_ID_RANGE_MIN;
@@ -434,7 +425,6 @@ void uart_send_R_ctler_normal(uint8_t msg)
         sprintf(msg_buf + 2, "%d", id);
     }
     my_uart_send_full_message(msg_buf);
-    LED_G_Bat_Off;
 }
 
 void uart_send_C_Off(void)
@@ -520,6 +510,7 @@ static void process_complete_frame(uint8_t *frame, uint32_t length)
 {
     // memcpy(UartMessage, frame, length);
     // UartMessage[length] = '\0';
+    bool cmd_valid_flag = true;
     if (length < 3) {
         // printf("Invalid frame \n");
         //  LED_TEST_On;
@@ -561,12 +552,16 @@ static void process_complete_frame(uint8_t *frame, uint32_t length)
         break;
     default:
         UART_Command_Num = 0;
+        cmd_valid_flag = false;
         uart_send_BError();
 #ifdef USART_DEBUG
         uint8_t debug_msg[] = "unknown command";
         my_uart_send_raw(debug_msg);
 #endif
         break;
+    }
+    if (cmd_valid_flag == true) { // 每次模块都会回复上层，所以此处不必闪烁
+        // message_green_led();//串口接收到正确指令，闪绿灯
     }
     // memset(UartMessage, 0, UART_REC_BUFFER_SIZE);
 }
@@ -620,55 +615,55 @@ static void process_p_frame(const uint8_t *frame_data)
         uint8_t location_module_power = frame_data[11] == '1' ? 1 : 0;
         if (helmet_power) {
             PCTL_HeadBoard_On;
-            PCTL_HeadBoard_Flag = true;
+            //PCTL_HeadBoard_Flag = true;
         }
         else {
             PCTL_HeadBoard_Off;
-            PCTL_HeadBoard_Flag = false;
+            //PCTL_HeadBoard_Flag = false;
         }
         if (mesh_network_power) {
             PCTL_Adhoc_On;
-            PCTL_Adhoc_Flag = true;
+            //PCTL_Adhoc_Flag = true;
         }
 
         else {
             PCTL_Adhoc_Off;
-            PCTL_Adhoc_Flag = false;
+            //PCTL_Adhoc_Flag = false;
         }
 
         if (walkie_talkie_power) {
             PCTL_DMR_On;
-            PCTL_DMR_Flag = true;
+            //PCTL_DMR_Flag = true;
         }
 
         else {
             PCTL_DMR_Off;
-            PCTL_DMR_Flag = false;
+            //PCTL_DMR_Flag = false;
         }
 
         if (mobile_network_power) {
             PCTL_5G_On;
-            PCTL_5G_Flag = true;
+            //PCTL_5G_Flag = true;
         }
         else {
             PCTL_5G_Off;
-            PCTL_5G_Flag = false;
+            // PCTL_5G_Flag = false;
         }
         if (satellite_comm_power) {
             PCTL_GEO_On;
-            PCTL_GEO_Flag = true;
+            //PCTL_GEO_Flag = true;
         }
         else {
             PCTL_GEO_Off;
-            PCTL_GEO_Flag = false;
+            //PCTL_GEO_Flag = false;
         }
         if (location_module_power) {
             PCTL_Location_On;
-            PCTL_Location_Flag = true;
+            //PCTL_Location_Flag = true;
         }
         else {
             PCTL_Location_Off;
-            PCTL_Location_Flag = false;
+            //PCTL_Location_Flag = false;
         }
         uart_send_BOK();
     }

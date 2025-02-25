@@ -53,23 +53,23 @@ static void mainboard_init(void)
 {
     PCTL_MainBoard_On;
     PCTL_HeadBoard_On;
-    PCTL_HeadBoard_Flag = true;
+    //PCTL_HeadBoard_Flag = true;
     KEY_3588_Low;
     for (int i = 0; i < 100; i++) {
-        if (Bat_Sampled_Over) {
-            Bat_Sampled_Over = 0;
-            battery_det();
-            Flash_Status_LED();
-        }
+        // if (Bat_Sampled_Over) {
+        //     Bat_Sampled_Over = 0;
+        //     battery_det();
+        //     Flash_Status_LED();
+        // }
         Delay_10ms(3);
     }
     KEY_3588_High;
     for (int i = 0; i < 100; i++) {
-        if (Bat_Sampled_Over) {
-            Bat_Sampled_Over = 0;
-            battery_det();
-            Flash_Status_LED();
-        }
+        // if (Bat_Sampled_Over) {
+        //     Bat_Sampled_Over = 0;
+        //     battery_det();
+        //     Flash_Status_LED();
+        // }
         Delay_10ms(3);
     }
 }
@@ -98,7 +98,7 @@ void MsgLoop(void)
             FLASH_Unlock(FLASH_MemType_Data); // 开机后解锁
             // USART_MP3_Init();                 // 串口初始化，管脚：TX G1;RX G0
             Radio.Rx(RX_TIMEOUT_VALUE);
-
+                working_flag = true;
             while (!McuStopFlag) {
                 /* -------------------------------------------------------------------------- */
                 /*                                     测试                                     */
@@ -121,7 +121,34 @@ void MsgLoop(void)
                 if (Bat_Sampled_Over) {
                     Bat_Sampled_Over = 0;
                     battery_det();
-                    // Flash_Status_LED();
+                    // if (led_busy_flag == false)
+                    //     Flash_Status_LED();
+                    if (bat_power_off_flag == true) { // 电量低，自动关机
+                        PCTL_Adhoc_Off;               // 关闭所有电源
+                        PCTL_5G_Off;
+                        PCTL_HeadBoard_Off;
+                        PCTL_DMR_Off;
+                        PCTL_GEO_Off;
+                        PCTL_Location_Off;
+                        LED_R_Bat_Off;
+                        LED_G_Bat_Off;
+                        PCTL_MainBoard_Off;
+
+                        // PCTL_Location_Flag = false;
+                        // PCTL_GEO_Flag = false;
+                        // PCTL_DMR_Flag = false;
+                        // PCTL_HeadBoard_Flag = false;
+                        // PCTL_5G_Flag = false;
+                        // PCTL_Adhoc_Flag = false;
+
+                        // it_key_up_flag = false;
+                        power_off_led();
+                        PCTL_MCU_Off;
+                        keyState = 0;
+                        LED_TEST_Off;
+                        while (1)
+                            ; // 关机
+                    }
                 }
                 /* -------------------------------------------------------------------------- */
                 /*                                    按键状态                                    */
@@ -165,20 +192,15 @@ void MsgLoop(void)
                         LED_G_Bat_Off;
                         PCTL_MainBoard_Off;
 
-                        PCTL_Location_Flag = false;
-                        PCTL_GEO_Flag = false;
-                        PCTL_DMR_Flag = false;
-                        PCTL_HeadBoard_Flag = false;
-                        PCTL_5G_Flag = false;
-                        PCTL_Adhoc_Flag = false;
+                        // PCTL_Location_Flag = false;
+                        // PCTL_GEO_Flag = false;
+                        // PCTL_DMR_Flag = false;
+                        // PCTL_HeadBoard_Flag = false;
+                        // PCTL_5G_Flag = false;
+                        // PCTL_Adhoc_Flag = false;
 
                         // it_key_up_flag = false;
-                        for (int i = 0; i < 2; i++) { // 绿灯闪烁 2 下
-                            LED_G_Bat_On;
-                            Delay_10ms(20);
-                            LED_G_Bat_Off;
-                            Delay_10ms(20);
-                        }
+                        power_off_led();
                         PCTL_MCU_Off;
                         keyState = 0;
                         LED_TEST_Off;

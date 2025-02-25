@@ -15,6 +15,7 @@ static uint32_t turn_off_count_3s = 300;
 bool try_to_turn_off = false;
 bool turn_off_time_15s_flag = false;
 bool turn_off_time_3s_flag = false;
+bool working_flag = false;
 
 uint16_t rand_num = 0;
 // static uint16_t keyUpCnt = 0;
@@ -281,6 +282,8 @@ INTERRUPT_HANDLER(TIM4_UPD_OVF_TRG_IRQHandler, 25)
 
         // Select_light(light_Num);
         if (!McuStopFlag) {
+            if (led_busy_flag == false && working_flag == true)
+                Flash_Status_LED();
             // Flash_Status_LED();
             //  if (lightEnable) {
             //      switch (light_Num) {

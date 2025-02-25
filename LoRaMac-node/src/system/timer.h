@@ -21,6 +21,7 @@ extern uint16_t rand_num;
 extern bool try_to_turn_off;
 extern bool turn_off_time_15s_flag;
 extern bool turn_off_time_3s_flag;
+extern bool working_flag;
 
 void TIM4_Init(void);
 void TIM4_1s_Init(void);

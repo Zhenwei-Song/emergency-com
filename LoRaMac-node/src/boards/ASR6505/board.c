@@ -52,7 +52,57 @@ static void SystemClockReConfig(void);
 
 static void open_Check(void);
 
-char MY_ID=1;
+char MY_ID = 1;
+
+bool led_busy_flag = false;
+/**
+ * @description: 控制绿灯闪烁，用于串口和无线通信，接收和发送均闪烁，1s闪烁2下
+ * @return {*}
+ */
+void message_green_led(void)
+{
+    led_busy_flag = true;
+    LED_R_Bat_Off;
+    LED_G_Bat_On;
+    Delay_10ms(33);
+    LED_G_Bat_Off;
+    Delay_10ms(33);
+    LED_G_Bat_On;
+    Delay_10ms(33);
+    LED_G_Bat_Off;
+    led_busy_flag = false;
+}
+
+void power_on_led(void)
+{
+    led_busy_flag = true;
+    for (int i = 0; i < 3; i++) { // 绿红交替灯闪烁 3 下
+        LED_R_Bat_Off;
+        LED_G_Bat_On;
+        Delay_10ms(20);
+        LED_G_Bat_Off;
+        LED_R_Bat_On;
+        Delay_10ms(20);
+    }
+    LED_R_Bat_Off;
+    led_busy_flag = false;
+}
+
+void power_off_led(void)
+{
+    led_busy_flag = true;
+    for (int i = 0; i < 2; i++) { // 绿红交替灯闪烁 2 下
+        LED_R_Bat_Off;
+        LED_G_Bat_On;
+        Delay_10ms(20);
+        LED_G_Bat_Off;
+        LED_R_Bat_On;
+        Delay_10ms(20);
+    }
+    LED_R_Bat_Off;
+    led_busy_flag = false;
+}
+
 uint8_t GetBoardPowerSource(void)
 {
     return USB_POWER;
@@ -92,7 +142,7 @@ void BoardInitMcu(void)
     SX126xIoInit(); // LORA
 
     disableInterrupts(); // 按键初始化
-   // GPIO_Init(KEY1_GPIO_PORT, KEY1_GPIO_PIN, GPIO_Mode_In_PU_IT);
+                         // GPIO_Init(KEY1_GPIO_PORT, KEY1_GPIO_PIN, GPIO_Mode_In_PU_IT);
     EXTI_SetPinSensitivity((EXTI_Pin_TypeDef)EXTI_Pin_0, EXTI_Trigger_Falling);
     enableInterrupts();
 
@@ -100,24 +150,24 @@ void BoardInitMcu(void)
 #ifdef _debug_without_power
     McuStopFlag = false;
 #else
-    if (KEY1 ==0)// 按键开机失败
+    if (KEY1 == 0) // 按键开机失败
     {
-      LED_R_Bat_Off;
-      LED_G_Bat_Off;
-      PCTL_MCU_Off;
-      McuStopFlag = true;
-      LED_TEST_Off;
-      while (1) ;// 关机
+        LED_R_Bat_Off;
+        LED_G_Bat_Off;
+        PCTL_MCU_Off;
+        McuStopFlag = true;
+        LED_TEST_Off;
+        while (1)
+            ; // 关机
     }
     open_Check();
     PCTL_MCU_On;
-    
+
 #endif
-    
-    LED_TEST_On;  
-    
+
+    LED_TEST_On;
+
     SpiInit(&SX126x.Spi, RADIO_SPI_ID, RADIO_MOSI, RADIO_MISO, RADIO_SCLK, NC /*RADIO_NSS*/);
-    
 }
 
 /*
@@ -126,18 +176,13 @@ void BoardInitMcu(void)
  */
 void open_Check(void)
 {
-  u8 temp;
-    if (KEY1 >0) { //按键按下
-        while (KEY1) { //等待按键弹起
+    u8 temp;
+    if (KEY1 > 0) {    // 按键按下
+        while (KEY1) { // 等待按键弹起
         };
-        if (keyState == 3) {              // 检测到按键按下,且按键长按3s，开机
-            for (int i = 0; i < 3; i++) { // 绿灯闪烁 3 下
-                LED_G_Bat_On;
-                Delay_10ms(20);
-                LED_G_Bat_Off;
-                Delay_10ms(20);
-            }
-            //PCTL_MCU_On;
+        if (keyState == 3) { // 检测到按键按下,且按键长按3s，开机
+            power_on_led();
+            // PCTL_MCU_On;
             McuStopFlag = false;
             keyState = 0;
             // all_power_on();
@@ -151,11 +196,10 @@ void open_Check(void)
             PCTL_MCU_Off;
             McuStopFlag = true;
             LED_TEST_Off;
-            while (1); // 关机
-                
+            while (1)
+                ; // 关机
         }
     }
-
 }
 
 void BoardResetMcu(void)
@@ -295,28 +339,28 @@ void Output_Pin_Init(void)
     GPIO_Init(PCTL_MCU_PORT, PCTL_MCU_PIN, GPIO_Mode_Out_PP_Low_Slow);
     PCTL_MCU_On;
     GPIO_Init(PCTL_MainBoard_PORT, PCTL_MainBoard_PIN, GPIO_Mode_Out_PP_Low_Slow);
-    //PCTL_MainBoard_Off; //
+    // PCTL_MainBoard_Off; //
     PCTL_MainBoard_On; //
     GPIO_Init(KEY_3588_PORT, KEY_3588_PIN, GPIO_Mode_Out_PP_Low_Slow);
     // KEY_3588_High; 3588就是上位机，它没上电前不给高电平
 
     GPIO_Init(PCTL_Location_PORT, PCTL_Location_PIN, GPIO_Mode_Out_PP_Low_Slow);
-    //PCTL_Location_Off;
+    // PCTL_Location_Off;
     PCTL_Location_On;
     GPIO_Init(PCTL_GEO_PORT, PCTL_GEO_PIN, GPIO_Mode_Out_PP_Low_Slow);
-    //PCTL_GEO_Off;
+    // PCTL_GEO_Off;
     PCTL_GEO_On;
     GPIO_Init(PCTL_DMR_PORT, PCTL_DMR_PIN, GPIO_Mode_Out_PP_Low_Slow);
-    //PCTL_DMR_Off;
+    // PCTL_DMR_Off;
     PCTL_DMR_On;
     GPIO_Init(PCTL_HeadBoard_PORT, PCTL_HeadBoard_PIN, GPIO_Mode_Out_PP_Low_Slow);
-    //PCTL_HeadBoard_Off;
+    // PCTL_HeadBoard_Off;
     PCTL_HeadBoard_On;
     GPIO_Init(PCTL_5G_PORT, PCTL_5G_PIN, GPIO_Mode_Out_PP_Low_Slow);
-    //PCTL_5G_Off;
+    // PCTL_5G_Off;
     PCTL_5G_On;
     GPIO_Init(PCTL_Adhoc_PORT, PCTL_Adhoc_PIN, GPIO_Mode_Out_PP_Low_Slow);
-    //PCTL_Adhoc_Off;
+    // PCTL_Adhoc_Off;
     PCTL_Adhoc_On;
     //    GPIO_Init(PCTL_AD_PORT, PCTL_AD_PIN, GPIO_Mode_Out_PP_Low_Slow);PCTL_AD_Off;
     //    GPIO_Init(GPIOC, GPIO_Pin_0, GPIO_Mode_Out_PP_Low_Slow);AD_BAT_On;
@@ -417,12 +461,12 @@ void McuEnterLowPowerStopMode(void)
     LED_TEST_Off;
     Light_Off;
 
-    PCTL_Location_Flag = false;
-    PCTL_GEO_Flag = false;
-    PCTL_DMR_Flag = false;
-    PCTL_HeadBoard_Flag = false;
-    PCTL_5G_Flag = false;
-    PCTL_Adhoc_Flag = false;
+    // PCTL_Location_Flag = false;
+    // PCTL_GEO_Flag = false;
+    // PCTL_DMR_Flag = false;
+    // PCTL_HeadBoard_Flag = false;
+    // PCTL_5G_Flag = false;
+    // PCTL_Adhoc_Flag = false;
 
     //    GPIO_Init(GPIOH, GPIO_Pin_4, GPIO_Mode_Out_OD_Low_Slow);
     //    GPIO_Init(GPIOH, GPIO_Pin_5, GPIO_Mode_Out_OD_Low_Slow);

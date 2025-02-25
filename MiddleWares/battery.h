@@ -10,6 +10,7 @@
 #ifndef __BAT_H
 #define __BAT_H
 #include "stm8l15x.h"
+#include <stdbool.h>
 
 #define BAT_100_TH 410
 #define BAT_75_TH 383
@@ -25,6 +26,7 @@ extern uint8_t System_Low_Power_Flag;
 extern uint32_t Bat_int, Bat_AD_Value;
 extern uint8_t Bat_Volt_int_cnt;
 extern uint8_t Bat_Value_Cnt, Bat_Sampled_Over;
+extern bool bat_power_off_flag;
 uint16_t get_battery_reading(void);
 void battery_init(void);
 void battery_det(void);

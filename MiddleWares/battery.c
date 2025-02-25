@@ -12,6 +12,7 @@ uint8_t Energy_Level = 0;
 float Energy_out = 0;
 uint8_t System_Low_Power_Flag = 1, Low_Power_Cnt = 0;
 uint8_t First_AD_Flag = 0;
+bool bat_power_off_flag = false;
 void battery_init(void)
 {
     CLK_PeripheralClockConfig(CLK_Peripheral_ADC1, ENABLE); // 开启ADC1时钟
@@ -80,28 +81,30 @@ void battery_det(void)
     else {
         Volt_Bat1 = Bat_AD_Value * 0.00262395523268; // 3.3/3*239/39 /(4096*64)* 100*1.0204
     }
-
-    if (Volt_Bat1 >= BAT_100_TH) {
+    Energy_out = Volt_Bat1 * 3 / 100;
+    Energy_out = Energy_out + BAT_CORRECTED;
+    Energy_Level = 5;
+    if (Energy_out >= 12) {
         Energy_Level = 4;
         System_Low_Power_Flag = 1;
         Low_Power_Cnt = 0;
     }
-    else if (Volt_Bat1 >= BAT_75_TH) {
+    else if (Energy_out >= 11.5) {
         Energy_Level = 3;
         System_Low_Power_Flag = 1;
         Low_Power_Cnt = 0;
     }
-    else if (Volt_Bat1 >= BAT_50_TH) {
+    else if (Energy_out >= 11.0) {
         Energy_Level = 2;
         System_Low_Power_Flag = 1;
         Low_Power_Cnt = 0;
     }
-    else if (Volt_Bat1 >= BAT_25_TH) {
+    else if (Energy_out >= 10.5) {
         Energy_Level = 1;
         System_Low_Power_Flag = 1;
         Low_Power_Cnt = 0;
     }
-    else if (Volt_Bat1 >= BAT_10_TH) {
+    else if (Energy_out >= 10) {
         Energy_Level = 0;
         System_Low_Power_Flag = 1;
         Low_Power_Cnt = 0;
@@ -112,7 +115,37 @@ void battery_det(void)
         if (Low_Power_Cnt >= 3)
             System_Low_Power_Flag = 2;
     }
-    Energy_out = Volt_Bat1 * 3 / 100;
+    // if (Volt_Bat1 >= BAT_100_TH) {
+    //     Energy_Level = 4;
+    //     System_Low_Power_Flag = 1;
+    //     Low_Power_Cnt = 0;
+    // }
+    // else if (Volt_Bat1 >= BAT_75_TH) {
+    //     Energy_Level = 3;
+    //     System_Low_Power_Flag = 1;
+    //     Low_Power_Cnt = 0;
+    // }
+    // else if (Volt_Bat1 >= BAT_50_TH) {
+    //     Energy_Level = 2;
+    //     System_Low_Power_Flag = 1;
+    //     Low_Power_Cnt = 0;
+    // }
+    // else if (Volt_Bat1 >= BAT_25_TH) {
+    //     Energy_Level = 1;
+    //     System_Low_Power_Flag = 1;
+    //     Low_Power_Cnt = 0;
+    // }
+    // else if (Volt_Bat1 >= BAT_10_TH) {
+    //     Energy_Level = 0;
+    //     System_Low_Power_Flag = 1;
+    //     Low_Power_Cnt = 0;
+    // }
+    // else {
+    //     Low_Power_Cnt++;
+    //     Energy_Level = 0;
+    //     if (Low_Power_Cnt >= 3)
+    //         System_Low_Power_Flag = 2;
+    // }
     ADC_SoftwareStartConv(ADC1); // 开启软件转换
 }
 
@@ -123,39 +156,80 @@ void battery_det(void)
 void Flash_Status_LED(void)
 {
     switch (Energy_Level) {
-    case 4:
-    case 3:
+    case 4: //>12
         LED_R_Bat_On;
         break;
-    case 2: // 1s 闪烁1次
+    case 3: // 1s 闪烁1次,>11.5
         if (cnt_10ms < 50)
             LED_R_Bat_On;
         else
             LED_R_Bat_Off;
         break;
-    case 1: // 1s 闪烁2次
-        if (cnt_10ms < 10)
+    case 2: // 1s 闪烁2次,>11.0
+        if (cnt_10ms < 25)
             LED_R_Bat_On;
-        else if (cnt_10ms < 20)
+        else if (cnt_10ms < 50)
             LED_R_Bat_Off;
-        else if (cnt_10ms < 30)
+        else if (cnt_10ms < 75)
             LED_R_Bat_On;
         else
             LED_R_Bat_Off;
         break;
-    default: // 1s 闪烁3次
-        if (cnt_10ms < 10)
+    case 1: // 1s 闪烁3次,>10.5
+        if (cnt_10ms < 16)
             LED_R_Bat_On;
-        else if (cnt_10ms < 20)
+        else if (cnt_10ms < 32)
             LED_R_Bat_Off;
-        else if (cnt_10ms < 30)
+        else if (cnt_10ms < 48)
             LED_R_Bat_On;
-        else if (cnt_10ms < 40)
+        else if (cnt_10ms < 64)
             LED_R_Bat_Off;
-        else if (cnt_10ms < 50)
+        else if (cnt_10ms < 80)
             LED_R_Bat_On;
         else
             LED_R_Bat_Off;
+        break;
+    case 0: // 1s 闪烁4次,>10
+        if (cnt_10ms < 12)
+            LED_R_Bat_On;
+        else if (cnt_10ms < 25)
+            LED_R_Bat_Off;
+        else if (cnt_10ms < 37)
+            LED_R_Bat_On;
+        else if (cnt_10ms < 50)
+            LED_R_Bat_Off;
+        else if (cnt_10ms < 62)
+            LED_R_Bat_On;
+        else if (cnt_10ms < 75)
+            LED_R_Bat_Off;
+        else if (cnt_10ms < 87)
+            LED_R_Bat_On;
+        else
+            LED_R_Bat_Off;
+        break;
+    default: // 1s 闪烁5次,<10
+        // if (cnt_10ms < 10)
+        //     LED_R_Bat_On;
+        // else if (cnt_10ms < 20)
+        //     LED_R_Bat_Off;
+        // else if (cnt_10ms < 30)
+        //     LED_R_Bat_On;
+        // else if (cnt_10ms < 40)
+        //     LED_R_Bat_Off;
+        // else if (cnt_10ms < 50)
+        //     LED_R_Bat_On;
+        // else if (cnt_10ms < 60)
+        //     LED_R_Bat_Off;
+        // else if (cnt_10ms < 70)
+        //     LED_R_Bat_On;
+        // else if (cnt_10ms < 80)
+        //     LED_R_Bat_Off;
+        // else if (cnt_10ms < 90)
+        //     LED_R_Bat_On;
+        // else
+        //     LED_R_Bat_Off;
+        // break;
+        bat_power_off_flag = true;
         break;
     }
 }

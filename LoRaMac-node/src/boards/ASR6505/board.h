@@ -31,6 +31,8 @@
 extern bool is_controller;
 extern bool is_terminal_emergency;
 extern bool is_terminal_normal;
+
+extern bool led_busy_flag;
 /*!
  * Possible power sources
  */
@@ -52,12 +54,16 @@ typedef union BoardVersion_u {
     uint32_t Value;
 } BoardVersion_t;
 
-/*!
- * \brief Disable interrupts
- *
- * \remark IRQ nesting is managed
- */
-void BoardDisableIrq(void);
+void message_green_led(void);
+void power_on_led(void);
+void power_off_led(void);
+
+    /*!
+     * \brief Disable interrupts
+     *
+     * \remark IRQ nesting is managed
+     */
+    void BoardDisableIrq(void);
 
 /*!
  * \brief Enable interrupts

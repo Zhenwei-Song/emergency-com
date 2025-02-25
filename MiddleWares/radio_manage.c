@@ -328,12 +328,10 @@ void radio_state_check(States_t Radiostate)
             if (cad_true_flag == false) {
                 // 信道空闲，可以发送消息
                 RF_TX_Over_Flag = 0;
-                LED_G_Bat_On;
                 Radio.Send(radio_send_msg.buffer, radio_send_msg.payloadsize);
                 while (RF_TX_Over_Flag == 0)
                     ;
-                Delay_10ms(10);
-                LED_G_Bat_Off;
+                message_green_led();
                 Radio.Rx(RX_TIMEOUT_VALUE);
                 RadioState = RX;
                 radio_TX_busy = false;
@@ -383,12 +381,10 @@ void radio_state_check(States_t Radiostate)
             if (cad_true_flag == false) {
                 // 信道空闲，可以发送消息
                 RF_TX_Over_Flag = 0;
-                LED_G_Bat_On;
                 Radio.Send(radio_send_msg.buffer, radio_send_msg.payloadsize);
                 while (RF_TX_Over_Flag == 0)
                     ;
-                Delay_10ms(10);
-                LED_G_Bat_Off;
+                message_green_led();
                 Radio.Rx(RX_TIMEOUT_VALUE); // 进入接收状态
                 RadioState = RX;
                 radio_TX_busy = false;
@@ -414,15 +410,14 @@ void radio_state_check(States_t Radiostate)
         case TX_TIMEOUT:
         default:
             RF_TX_Over_Flag = 0;
-            LED_G_Bat_On;
             Radio.Send(radio_send_msg.buffer, radio_send_msg.payloadsize);
             while (RF_TX_Over_Flag == 0)
                 ;
-            Delay_10ms(10);
+            
             // Radio.Send(radio_send_msg.buffer, radio_send_msg.payloadsize);
             // while (RF_TX_Over_Flag == 0)
             //     ;
-            LED_G_Bat_Off;
+            message_green_led();
             // DelayMs(emer_sleep_time_ms);
             // radio_send_mayday(MY_ID);
             break;
@@ -459,12 +454,10 @@ void radio_state_check(States_t Radiostate)
             if (isChannelFree) {
                 // 信道空闲，可以发送消息
                 RF_TX_Over_Flag = 0;
-                LED_G_Bat_On;
                 Radio.Send(radio_send_msg.buffer, radio_send_msg.payloadsize);
                 while (RF_TX_Over_Flag == 0)
                     ;
-                Delay_10ms(10);
-                LED_G_Bat_Off;
+                message_green_led();
                 Radio.Rx(RX_TIMEOUT_VALUE);
                 RadioState = RX;
                 radio_TX_busy = false;
@@ -511,12 +504,10 @@ void radio_state_check(States_t Radiostate)
             if (isChannelFree) {
                 // 信道空闲，可以发送消息
                 RF_TX_Over_Flag = 0;
-                LED_G_Bat_On;
                 Radio.Send(radio_send_msg.buffer, radio_send_msg.payloadsize);
                 while (RF_TX_Over_Flag == 0)
                     ;
-                Delay_10ms(10);
-                LED_G_Bat_Off;
+                message_green_led();
                 Radio.Rx(RX_TIMEOUT_VALUE);
                 RadioState = RX;
                 radio_TX_busy = false;
@@ -542,15 +533,13 @@ void radio_state_check(States_t Radiostate)
         case TX_TIMEOUT:
         default:
             RF_TX_Over_Flag = 0;
-            LED_G_Bat_On;
             Radio.Send(radio_send_msg.buffer, radio_send_msg.payloadsize);
             while (RF_TX_Over_Flag == 0)
                 ;
-            Delay_10ms(10);
             // Radio.Send(radio_send_msg.buffer, radio_send_msg.payloadsize);
             // while (RF_TX_Over_Flag == 0)
             //     ;
-            LED_G_Bat_Off;
+            message_green_led();
             // DelayMs(emer_sleep_time_ms);
             // radio_send_mayday(MY_ID);
             break;

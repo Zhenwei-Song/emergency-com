@@ -42,12 +42,12 @@
 
 extern uint32_t TIDSlot_time;
 
-extern bool PCTL_Location_Flag;
-extern bool PCTL_GEO_Flag;
-extern bool PCTL_DMR_Flag;
-extern bool PCTL_HeadBoard_Flag;
-extern bool PCTL_5G_Flag;
-extern bool PCTL_Adhoc_Flag;
+// extern bool PCTL_Location_Flag;
+// extern bool PCTL_GEO_Flag;
+// extern bool PCTL_DMR_Flag;
+// extern bool PCTL_HeadBoard_Flag;
+// extern bool PCTL_5G_Flag;
+// extern bool PCTL_Adhoc_Flag;
 
 extern uint8_t UART_Command_Num; // 命令
 
