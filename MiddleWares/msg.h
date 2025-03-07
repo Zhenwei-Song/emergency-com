@@ -44,7 +44,7 @@ extern uint8_t keyState;
 
 extern uint8_t Wireless_SYN_Flag; // �ӻ�����ͬ���Ϻ󣬸ñ�־λΪ1.
 extern bool lightEnable;
-extern volatile uint16_t cnt_10ms, Time_10ms_Cnt, Req_Send_Time_SYN_Frame;
+extern volatile uint16_t time_1s_cnt, time_10s_cnt, Req_Send_Time_SYN_Frame;
 
 extern void Reset_WWDG(void);
 extern void WWDG_Config(void);

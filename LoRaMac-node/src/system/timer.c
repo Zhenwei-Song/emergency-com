@@ -31,8 +31,9 @@ uint32_t sleep_time = 0;
 volatile uint32_t Stanby_10ms_Cnt = Stanby_10ms_max;
 volatile uint32_t SYN_10ms_Cnt = SYN_10ms_max;
 volatile bool lightEnable = false; //
-volatile uint16_t cnt_10ms = 0, Time_10ms_Cnt = 0, Req_Send_Time_SYN_Frame = 0;
+volatile uint16_t time_1s_cnt = 0, time_10s_cnt = 0, Req_Send_Time_SYN_Frame = 0;
 volatile uint8_t LED_Max_On_10ms_Cnt = 6;
+volatile uint16_t time_4s_cnt = 0;
 
 /**
  * @description: 10ms定时器
@@ -269,16 +270,20 @@ INTERRUPT_HANDLER(TIM4_UPD_OVF_TRG_IRQHandler, 25)
         //     }
         // }
 
-        Time_10ms_Cnt++;
-        // if (Time_10ms_Cnt == SYN_10ms_max) // 每SYN_10ms_max广播一次同步信息
+        time_10s_cnt++;
+        time_1s_cnt++;
+        time_4s_cnt++;
+        // if (time_10s_cnt == SYN_10ms_max) // 每SYN_10ms_max广播一次同步信息
         // {
-        //     Time_10ms_Cnt = 0;
+        //     time_10s_cnt = 0;
         //     Req_Send_Time_SYN_Frame = 1;
         // }
-        if (Time_10ms_Cnt == 1000) {
-            Time_10ms_Cnt = 0;
-        }
-        cnt_10ms = Time_10ms_Cnt % 100;
+        if (time_10s_cnt == 1000) // 10s
+            time_10s_cnt = 0;
+        if (time_1s_cnt == 100) // 1s
+            time_1s_cnt = 0;
+        if (time_4s_cnt == 400) // 4s
+            time_4s_cnt = 0;
 
         // Select_light(light_Num);
         if (!McuStopFlag) {

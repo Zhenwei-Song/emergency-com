@@ -3,7 +3,7 @@
 #include "stdbool.h"
 #include "timer.h"
 
-extern volatile uint16_t cnt_10ms, Time_10ms_Cnt;
+extern volatile uint16_t time_1s_cnt, time_10s_cnt;
 extern volatile bool lightEnable;
 extern volatile uint8_t LED_Max_On_10ms_Cnt;
 
@@ -18,11 +18,11 @@ void ledB_toggle(void)
     //LED_R2_Off;
     //LED_G1_Off;
     //LED_G2_Off;
-    if (cnt_10ms == 50) {
+    if (time_1s_cnt == 50) {
         //LED_B1_On;
         //LED_B2_On;
     }
-    else if (cnt_10ms == 50 + LED_Max_On_10ms_Cnt) {
+    else if (time_1s_cnt == 50 + LED_Max_On_10ms_Cnt) {
         //LED_B1_Off;
         //LED_B2_Off;
     }
@@ -34,11 +34,11 @@ void ledG_toggle(void)
     //LED_R2_Off;
     //LED_B1_Off;
     //LED_B2_Off;
-    if (cnt_10ms == 50) {
+    if (time_1s_cnt == 50) {
         //LED_G1_On;
         //LED_G2_On;
     }
-    else if (cnt_10ms == 50 + LED_Max_On_10ms_Cnt) {
+    else if (time_1s_cnt == 50 + LED_Max_On_10ms_Cnt) {
         //LED_G1_Off;
         //LED_G2_Off;
     }
@@ -48,13 +48,13 @@ void ledY_toggle(void)
 {
     //LED_B1_Off;
     //LED_B2_Off;
-    if (cnt_10ms == 50) {
+    if (time_1s_cnt == 50) {
         //LED_G1_On;
         //LED_G2_On;
         //LED_R1_On;
         //LED_R2_On;
     }
-    else if (cnt_10ms == 50 + LED_Max_On_10ms_Cnt) {
+    else if (time_1s_cnt == 50 + LED_Max_On_10ms_Cnt) {
         //LED_R1_Off;
         //LED_R2_Off;
         //LED_G1_Off;
@@ -69,11 +69,11 @@ void ledR_toggle(void)
     //LED_G2_Off;
     //LED_B1_Off;
     //LED_B2_Off;
-    if (cnt_10ms == 50) {
+    if (time_1s_cnt == 50) {
         //LED_R1_On;
         //LED_R2_On;
     }
-    else if (cnt_10ms == 5 + LED_Max_On_10ms_Cnt) {
+    else if (time_1s_cnt == 5 + LED_Max_On_10ms_Cnt) {
         //LED_R1_Off;
         //LED_R2_Off;
     }
@@ -86,19 +86,19 @@ void ledB_LR_toggle(void)
     //LED_R2_Off;
     //LED_G1_Off;
     //LED_G2_Off;
-    if (cnt_10ms == 50) {
+    if (time_1s_cnt == 50) {
         //LED_B2_Off;
         //LED_B1_On;
     }
-    else if (cnt_10ms == 50 + LED_Max_On_10ms_Cnt) {
+    else if (time_1s_cnt == 50 + LED_Max_On_10ms_Cnt) {
         //LED_B2_Off;
         //LED_B1_Off;
     }
-    else if (cnt_10ms == 0) {
+    else if (time_1s_cnt == 0) {
         //LED_B1_Off;
         //LED_B2_On;
     }
-    else if (cnt_10ms == LED_Max_On_10ms_Cnt) {
+    else if (time_1s_cnt == LED_Max_On_10ms_Cnt) {
         //LED_B2_Off;
         //LED_B1_Off;
     }
@@ -110,19 +110,19 @@ void ledG_LR_toggle(void)
     //LED_R2_Off;
     //LED_B1_Off;
     //LED_B2_Off;
-    if (cnt_10ms == 50) {
+    if (time_1s_cnt == 50) {
         //LED_G2_Off;
         //LED_G1_On;
     }
-    else if (cnt_10ms == 50 + LED_Max_On_10ms_Cnt) {
+    else if (time_1s_cnt == 50 + LED_Max_On_10ms_Cnt) {
         //LED_G2_Off;
         //LED_G1_Off;
     }
-    else if (cnt_10ms == 0) {
+    else if (time_1s_cnt == 0) {
         //LED_G1_Off;
         //LED_G2_On;
     }
-    else if (cnt_10ms == LED_Max_On_10ms_Cnt) {
+    else if (time_1s_cnt == LED_Max_On_10ms_Cnt) {
         //LED_G2_Off;
         //LED_G1_Off;
     }
@@ -132,25 +132,25 @@ void ledY_LR_toggle(void)
 {
     //LED_B1_Off;
     //LED_B2_Off;
-    if (cnt_10ms == 50) {
+    if (time_1s_cnt == 50) {
         //LED_R2_Off;
         //LED_G2_Off;
         //LED_G1_On;
         //LED_R1_On;
     }
-    else if (cnt_10ms == 50 + LED_Max_On_10ms_Cnt) {
+    else if (time_1s_cnt == 50 + LED_Max_On_10ms_Cnt) {
         //LED_R2_Off;
         //LED_G2_Off;
         //LED_G1_Off;
         //LED_R1_Off;
     }
-    else if (cnt_10ms == 0) {
+    else if (time_1s_cnt == 0) {
         //LED_R1_Off;
         //LED_G1_Off;
         //LED_G2_On;
         //LED_R2_On;
     }
-    else if (cnt_10ms == LED_Max_On_10ms_Cnt) {
+    else if (time_1s_cnt == LED_Max_On_10ms_Cnt) {
         //LED_R2_Off;
         //LED_G2_Off;
         //LED_G1_Off;
@@ -164,19 +164,19 @@ void ledR_LR_toggle(void)
     //LED_G2_Off;
     //LED_B1_Off;
     //LED_B2_Off;
-    if (cnt_10ms == 50) {
+    if (time_1s_cnt == 50) {
         //LED_R2_Off;
         //LED_R1_On;
     }
-    else if (cnt_10ms == 50 + LED_Max_On_10ms_Cnt) {
+    else if (time_1s_cnt == 50 + LED_Max_On_10ms_Cnt) {
         //LED_R2_Off;
         //LED_R1_Off;
     }
-    else if (cnt_10ms == 0) {
+    else if (time_1s_cnt == 0) {
         //LED_R1_Off;
         //LED_R2_On;
     }
-    else if (cnt_10ms == LED_Max_On_10ms_Cnt) {
+    else if (time_1s_cnt == LED_Max_On_10ms_Cnt) {
         //LED_R2_Off;
         //LED_R1_Off;
     }
@@ -189,11 +189,11 @@ void ledB_Fast_toggle(void)
     //LED_R2_Off;
     //LED_G1_Off;
     //LED_G2_Off;
-    if (cnt_10ms == 0 || cnt_10ms == 10 || cnt_10ms == 20 || cnt_10ms == 30) {
+    if (time_1s_cnt == 0 || time_1s_cnt == 10 || time_1s_cnt == 20 || time_1s_cnt == 30) {
         //LED_B1_On;
         //LED_B2_On;
     }
-    if (cnt_10ms == LED_Max_On_10ms_Cnt || cnt_10ms == 10 + LED_Max_On_10ms_Cnt || cnt_10ms == 20 + LED_Max_On_10ms_Cnt || cnt_10ms == 30 + LED_Max_On_10ms_Cnt) {
+    if (time_1s_cnt == LED_Max_On_10ms_Cnt || time_1s_cnt == 10 + LED_Max_On_10ms_Cnt || time_1s_cnt == 20 + LED_Max_On_10ms_Cnt || time_1s_cnt == 30 + LED_Max_On_10ms_Cnt) {
         //LED_B1_Off;
         //LED_B2_Off;
     }
@@ -205,11 +205,11 @@ void ledG_Fast_toggle(void)
     //LED_R2_Off;
     //LED_B1_Off;
     //LED_B2_Off;
-    if (cnt_10ms == 0 || cnt_10ms == 10 || cnt_10ms == 20 || cnt_10ms == 30) {
+    if (time_1s_cnt == 0 || time_1s_cnt == 10 || time_1s_cnt == 20 || time_1s_cnt == 30) {
         //LED_G1_On;
         //LED_G2_On;
     }
-    if (cnt_10ms == LED_Max_On_10ms_Cnt || cnt_10ms == 10 + LED_Max_On_10ms_Cnt || cnt_10ms == 20 + LED_Max_On_10ms_Cnt || cnt_10ms == 30 + LED_Max_On_10ms_Cnt) {
+    if (time_1s_cnt == LED_Max_On_10ms_Cnt || time_1s_cnt == 10 + LED_Max_On_10ms_Cnt || time_1s_cnt == 20 + LED_Max_On_10ms_Cnt || time_1s_cnt == 30 + LED_Max_On_10ms_Cnt) {
         //LED_G1_Off;
         //LED_G2_Off;
     }
@@ -219,13 +219,13 @@ void ledY_Fast_toggle(void)
 {
     //LED_B1_Off;
     //LED_B2_Off;
-    if (cnt_10ms == 0 || cnt_10ms == 10 || cnt_10ms == 20 || cnt_10ms == 30) {
+    if (time_1s_cnt == 0 || time_1s_cnt == 10 || time_1s_cnt == 20 || time_1s_cnt == 30) {
         //LED_G1_On;
         //LED_G2_On;
         //LED_R1_On;
         //LED_R2_On;
     }
-    if (cnt_10ms == LED_Max_On_10ms_Cnt || cnt_10ms == 10 + LED_Max_On_10ms_Cnt || cnt_10ms == 20 + LED_Max_On_10ms_Cnt || cnt_10ms == 30 + LED_Max_On_10ms_Cnt) {
+    if (time_1s_cnt == LED_Max_On_10ms_Cnt || time_1s_cnt == 10 + LED_Max_On_10ms_Cnt || time_1s_cnt == 20 + LED_Max_On_10ms_Cnt || time_1s_cnt == 30 + LED_Max_On_10ms_Cnt) {
         //LED_R1_Off;
         //LED_R2_Off;
         //LED_G1_Off;
@@ -239,11 +239,11 @@ void ledR_Fast_toggle(void)
     //LED_G2_Off;
     //LED_B1_Off;
     //LED_B2_Off;
-    if (cnt_10ms == 0 || cnt_10ms == 10 || cnt_10ms == 20 || cnt_10ms == 30) {
+    if (time_1s_cnt == 0 || time_1s_cnt == 10 || time_1s_cnt == 20 || time_1s_cnt == 30) {
         //LED_R1_On;
         //LED_R2_On;
     }
-    if (cnt_10ms == LED_Max_On_10ms_Cnt || cnt_10ms == 10 + LED_Max_On_10ms_Cnt || cnt_10ms == 20 + LED_Max_On_10ms_Cnt || cnt_10ms == 30 + LED_Max_On_10ms_Cnt) {
+    if (time_1s_cnt == LED_Max_On_10ms_Cnt || time_1s_cnt == 10 + LED_Max_On_10ms_Cnt || time_1s_cnt == 20 + LED_Max_On_10ms_Cnt || time_1s_cnt == 30 + LED_Max_On_10ms_Cnt) {
         //LED_R1_Off;
         //LED_R2_Off;
     }
@@ -253,25 +253,25 @@ void ledGY_toggle(void)
 {
     //LED_B1_Off;
     //LED_B2_Off;
-    if (cnt_10ms == 50) {
+    if (time_1s_cnt == 50) {
         //LED_R1_Off;
         //LED_R2_Off;
         //LED_G1_On;
         //LED_G2_On;
     }
-    else if (cnt_10ms == 50 + LED_Max_On_10ms_Cnt) {
+    else if (time_1s_cnt == 50 + LED_Max_On_10ms_Cnt) {
         //LED_R1_Off;
         //LED_R2_Off;
         //LED_G1_Off;
         //LED_G2_Off;
     }
-    else if (cnt_10ms == 0) {
+    else if (time_1s_cnt == 0) {
         //LED_R1_On;
         //LED_G1_On;
         //LED_R2_On;
         //LED_G2_On;
     }
-    else if (cnt_10ms == LED_Max_On_10ms_Cnt) {
+    else if (time_1s_cnt == LED_Max_On_10ms_Cnt) {
         //LED_R1_Off;
         //LED_R2_Off;
         //LED_G1_Off;
@@ -281,7 +281,7 @@ void ledGY_toggle(void)
 // À¶»Æ
 void ledBY_toggle(void)
 {
-    if (cnt_10ms == 50) {
+    if (time_1s_cnt == 50) {
         //LED_R1_Off;
         //LED_G1_Off;
         //LED_R2_Off;
@@ -289,7 +289,7 @@ void ledBY_toggle(void)
         //LED_B1_On;
         //LED_B2_On;
     }
-    else if (cnt_10ms == 50 + LED_Max_On_10ms_Cnt) {
+    else if (time_1s_cnt == 50 + LED_Max_On_10ms_Cnt) {
         //LED_R1_Off;
         //LED_G1_Off;
         //LED_R2_Off;
@@ -297,7 +297,7 @@ void ledBY_toggle(void)
         //LED_B1_Off;
         //LED_B2_Off;
     }
-    else if (cnt_10ms == 0) {
+    else if (time_1s_cnt == 0) {
         //LED_B1_Off;
         //LED_B2_Off;
         //LED_R1_On;
@@ -305,7 +305,7 @@ void ledBY_toggle(void)
         //LED_R2_On;
         //LED_G2_On;
     }
-    else if (cnt_10ms == LED_Max_On_10ms_Cnt) {
+    else if (time_1s_cnt == LED_Max_On_10ms_Cnt) {
         //LED_R1_Off;
         //LED_G1_Off;
         //LED_R2_Off;
@@ -319,25 +319,25 @@ void ledRY_toggle(void)
 {
     //LED_B1_Off;
     //LED_B2_Off;
-    if (cnt_10ms == 50) {
+    if (time_1s_cnt == 50) {
         //LED_G1_Off;
         //LED_G2_Off;
         //LED_R1_On;
         //LED_R2_On;
     }
-    else if (cnt_10ms == 50 + LED_Max_On_10ms_Cnt) {
+    else if (time_1s_cnt == 50 + LED_Max_On_10ms_Cnt) {
         //LED_G1_Off;
         //LED_G2_Off;
         //LED_R1_Off;
         //LED_R2_Off;
     }
-    else if (cnt_10ms == 0) {
+    else if (time_1s_cnt == 0) {
         //LED_G1_On;
         //LED_G2_On;
         //LED_R1_On;
         //LED_R2_On;
     }
-    else if (cnt_10ms == LED_Max_On_10ms_Cnt) {
+    else if (time_1s_cnt == LED_Max_On_10ms_Cnt) {
         //LED_G1_Off;
         //LED_G2_Off;
         //LED_R1_Off;
@@ -350,25 +350,25 @@ void ledRB_toggle(void)
 {
     //LED_G1_Off;
     //LED_G2_Off;
-    if (cnt_10ms == 0 || cnt_10ms == 10 || cnt_10ms == 20 || cnt_10ms == 30) {
+    if (time_1s_cnt == 0 || time_1s_cnt == 10 || time_1s_cnt == 20 || time_1s_cnt == 30) {
         //LED_R1_Off;
         //LED_R2_Off;
         //LED_B1_Off;
         //LED_B2_On;
     }
-    else if (cnt_10ms == LED_Max_On_10ms_Cnt || cnt_10ms == 10 + LED_Max_On_10ms_Cnt || cnt_10ms == 20 + LED_Max_On_10ms_Cnt || cnt_10ms == 30 + LED_Max_On_10ms_Cnt) {
+    else if (time_1s_cnt == LED_Max_On_10ms_Cnt || time_1s_cnt == 10 + LED_Max_On_10ms_Cnt || time_1s_cnt == 20 + LED_Max_On_10ms_Cnt || time_1s_cnt == 30 + LED_Max_On_10ms_Cnt) {
         //LED_R1_Off;
         //LED_R2_Off;
         //LED_B1_Off;
         //LED_B2_Off;
     }
-    else if (cnt_10ms == 50 || cnt_10ms == 60 || cnt_10ms == 70 || cnt_10ms == 80) {
+    else if (time_1s_cnt == 50 || time_1s_cnt == 60 || time_1s_cnt == 70 || time_1s_cnt == 80) {
         //LED_B1_Off;
         //LED_B2_Off;
         //LED_R1_On;
         //LED_R2_Off;
     }
-    else if (cnt_10ms == 50 + LED_Max_On_10ms_Cnt || cnt_10ms == 60 + LED_Max_On_10ms_Cnt || cnt_10ms == 70 + LED_Max_On_10ms_Cnt || cnt_10ms == 80 + LED_Max_On_10ms_Cnt) {
+    else if (time_1s_cnt == 50 + LED_Max_On_10ms_Cnt || time_1s_cnt == 60 + LED_Max_On_10ms_Cnt || time_1s_cnt == 70 + LED_Max_On_10ms_Cnt || time_1s_cnt == 80 + LED_Max_On_10ms_Cnt) {
         //LED_B1_Off;
         //LED_B2_Off;
         //LED_R1_Off;

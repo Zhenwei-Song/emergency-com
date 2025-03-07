@@ -507,7 +507,7 @@ void RadioInit(RadioEvents_t *events)
     SX126xSetDioIrqParams(IRQ_RADIO_ALL, IRQ_RADIO_ALL, IRQ_RADIO_NONE, IRQ_RADIO_NONE);
 #ifdef USING_CAD
     // 添加CAD参数
-     //SX126xSetCadParams(LORA_CAD_04_SYMBOL, 28, 10, LORA_CAD_RX, 10000); // Rx Timeout = cadTimeout * 15.625 （us）
+    // SX126xSetCadParams(LORA_CAD_04_SYMBOL, 28, 10, LORA_CAD_RX, 10000); // Rx Timeout = cadTimeout * 15.625 （us）
     SX126xSetCadParams(LORA_CAD_04_SYMBOL, 28, 10, LORA_CAD_ONLY, 0); // Rx Timeout = cadTimeout * 15.625 （us）
 
 #endif //  USING_CAD
@@ -1045,7 +1045,7 @@ void RadioOnRxTimeoutIrq(void)
     }
 }
 
-extern volatile uint16_t cnt_10ms, Time_10ms_Cnt;
+extern volatile uint16_t cnt_10ms, time_10s_cnt;
 void RadioOnDioIrq(void)
 {
     IrqFired = true;

@@ -32,7 +32,6 @@ void battery_init(void)
     Delay_10ms(1);
     First_AD_Flag = 1;
 }
-extern volatile uint16_t cnt_10ms;
 uint16_t get_battery_reading(void)
 {
     ADC_SoftwareStartConv(ADC1); // 开启软件转换
@@ -160,71 +159,71 @@ void Flash_Status_LED(void)
         LED_R_Bat_On;
         break;
     case 3: // 1s 闪烁1次,>11.5
-        if (cnt_10ms < 50)
+        if (time_4s_cnt < 100)
             LED_R_Bat_On;
         else
             LED_R_Bat_Off;
         break;
     case 2: // 1s 闪烁2次,>11.0
-        if (cnt_10ms < 25)
+        if (time_4s_cnt < 25)
             LED_R_Bat_On;
-        else if (cnt_10ms < 50)
+        else if (time_4s_cnt < 50)
             LED_R_Bat_Off;
-        else if (cnt_10ms < 75)
+        else if (time_4s_cnt < 75)
             LED_R_Bat_On;
         else
             LED_R_Bat_Off;
         break;
     case 1: // 1s 闪烁3次,>10.5
-        if (cnt_10ms < 16)
+        if (time_4s_cnt < 16)
             LED_R_Bat_On;
-        else if (cnt_10ms < 32)
+        else if (time_4s_cnt < 32)
             LED_R_Bat_Off;
-        else if (cnt_10ms < 48)
+        else if (time_4s_cnt < 48)
             LED_R_Bat_On;
-        else if (cnt_10ms < 64)
+        else if (time_4s_cnt < 64)
             LED_R_Bat_Off;
-        else if (cnt_10ms < 80)
+        else if (time_4s_cnt < 80)
             LED_R_Bat_On;
         else
             LED_R_Bat_Off;
         break;
     case 0: // 1s 闪烁4次,>10
-        if (cnt_10ms < 12)
+        if (time_4s_cnt < 12)
             LED_R_Bat_On;
-        else if (cnt_10ms < 25)
+        else if (time_4s_cnt < 25)
             LED_R_Bat_Off;
-        else if (cnt_10ms < 37)
+        else if (time_4s_cnt < 37)
             LED_R_Bat_On;
-        else if (cnt_10ms < 50)
+        else if (time_4s_cnt < 50)
             LED_R_Bat_Off;
-        else if (cnt_10ms < 62)
+        else if (time_4s_cnt < 62)
             LED_R_Bat_On;
-        else if (cnt_10ms < 75)
+        else if (time_4s_cnt < 75)
             LED_R_Bat_Off;
-        else if (cnt_10ms < 87)
+        else if (time_4s_cnt < 87)
             LED_R_Bat_On;
         else
             LED_R_Bat_Off;
         break;
     default: // 1s 闪烁5次,<10
-        // if (cnt_10ms < 10)
+        // if (time_4s_cnt < 10)
         //     LED_R_Bat_On;
-        // else if (cnt_10ms < 20)
+        // else if (time_4s_cnt < 20)
         //     LED_R_Bat_Off;
-        // else if (cnt_10ms < 30)
+        // else if (time_4s_cnt < 30)
         //     LED_R_Bat_On;
-        // else if (cnt_10ms < 40)
+        // else if (time_4s_cnt < 40)
         //     LED_R_Bat_Off;
-        // else if (cnt_10ms < 50)
+        // else if (time_4s_cnt < 50)
         //     LED_R_Bat_On;
-        // else if (cnt_10ms < 60)
+        // else if (time_4s_cnt < 60)
         //     LED_R_Bat_Off;
-        // else if (cnt_10ms < 70)
+        // else if (time_4s_cnt < 70)
         //     LED_R_Bat_On;
-        // else if (cnt_10ms < 80)
+        // else if (time_4s_cnt < 80)
         //     LED_R_Bat_Off;
-        // else if (cnt_10ms < 90)
+        // else if (time_4s_cnt < 90)
         //     LED_R_Bat_On;
         // else
         //     LED_R_Bat_Off;

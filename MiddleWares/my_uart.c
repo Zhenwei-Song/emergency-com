@@ -278,7 +278,7 @@ void uart_send_M(void)
  */
 void uart_send_L(void)
 {
-    uint8_t message[10];
+    uint8_t message[6] = {0};
     message[0] = 'L';
     if (Energy_out >= 10) {
         sprintf((char *)message + 1, "%.1f", Energy_out);
