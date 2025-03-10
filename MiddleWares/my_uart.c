@@ -2,7 +2,7 @@
  * @Author: Zhenwei Song zhenwei.song@qq.com
  * @Date: 2024-06-05 10:51:06
  * @LastEditors: Zhenwei Song zhenwei_song@foxmail.com
- * @LastEditTime: 2025-02-20 15:37:10
+ * @LastEditTime: 2025-03-07 16:57:51
  * @FilePath: \emergency com for git\MiddleWares\my_uart.c
  * @Description: 仅供学习交流使用
  * Copyright (c) 2024 by Zhenwei Song, All Rights Reserved.
@@ -251,7 +251,7 @@ void uart_send_P(void)
  */
 void uart_send_V(float version)
 {
-    uint8_t ver_buffer[10];
+    uint8_t ver_buffer[5];
     ver_buffer[0] = 'V';
     sprintf((char *)ver_buffer + 1, "%.1f", version);
     my_uart_send_full_message(ver_buffer);
@@ -278,15 +278,17 @@ void uart_send_M(void)
  */
 void uart_send_L(void)
 {
-    uint8_t message[6] = {0};
+    uint8_t message[7] = {0};
     message[0] = 'L';
     if (Energy_out >= 10) {
         sprintf((char *)message + 1, "%.1f", Energy_out);
         message[5] = 'V';
+        message[6] = '\0';
     }
     else {
         sprintf((char *)message + 1, "%.1f", Energy_out);
         message[4] = 'V';
+        message[5] = '\0';
     }
 
     my_uart_send_full_message(message);
@@ -615,35 +617,35 @@ static void process_p_frame(const uint8_t *frame_data)
         uint8_t location_module_power = frame_data[11] == '1' ? 1 : 0;
         if (helmet_power) {
             PCTL_HeadBoard_On;
-            //PCTL_HeadBoard_Flag = true;
+            // PCTL_HeadBoard_Flag = true;
         }
         else {
             PCTL_HeadBoard_Off;
-            //PCTL_HeadBoard_Flag = false;
+            // PCTL_HeadBoard_Flag = false;
         }
         if (mesh_network_power) {
             PCTL_Adhoc_On;
-            //PCTL_Adhoc_Flag = true;
+            // PCTL_Adhoc_Flag = true;
         }
 
         else {
             PCTL_Adhoc_Off;
-            //PCTL_Adhoc_Flag = false;
+            // PCTL_Adhoc_Flag = false;
         }
 
         if (walkie_talkie_power) {
             PCTL_DMR_On;
-            //PCTL_DMR_Flag = true;
+            // PCTL_DMR_Flag = true;
         }
 
         else {
             PCTL_DMR_Off;
-            //PCTL_DMR_Flag = false;
+            // PCTL_DMR_Flag = false;
         }
 
         if (mobile_network_power) {
             PCTL_5G_On;
-            //PCTL_5G_Flag = true;
+            // PCTL_5G_Flag = true;
         }
         else {
             PCTL_5G_Off;
@@ -651,19 +653,19 @@ static void process_p_frame(const uint8_t *frame_data)
         }
         if (satellite_comm_power) {
             PCTL_GEO_On;
-            //PCTL_GEO_Flag = true;
+            // PCTL_GEO_Flag = true;
         }
         else {
             PCTL_GEO_Off;
-            //PCTL_GEO_Flag = false;
+            // PCTL_GEO_Flag = false;
         }
         if (location_module_power) {
             PCTL_Location_On;
-            //PCTL_Location_Flag = true;
+            // PCTL_Location_Flag = true;
         }
         else {
             PCTL_Location_Off;
-            //PCTL_Location_Flag = false;
+            // PCTL_Location_Flag = false;
         }
         uart_send_BOK();
     }
