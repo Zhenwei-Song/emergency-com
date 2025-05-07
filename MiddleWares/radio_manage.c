@@ -2,8 +2,8 @@
  * @Author: Zhenwei Song zhenwei.song@qq.com
  * @Date: 2024-06-06 16:43:41
  * @LastEditors: Zhenwei Song zhenwei_song@foxmail.com
- * @LastEditTime: 2024-11-21 16:28:51
- * @FilePath: \emergency com 20241114V1.5 cad_test\MiddleWares\radio_manage.c
+ * @LastEditTime: 2025-05-07 16:26:45
+ * @FilePath: \emergency com for git\MiddleWares\radio_manage.c
  * @Description: 仅供学习交流使用
  * Copyright (c) 2024 by Zhenwei Song, All Rights Reserved.
  */
@@ -413,11 +413,11 @@ void radio_state_check(States_t Radiostate)
             Radio.Send(radio_send_msg.buffer, radio_send_msg.payloadsize);
             while (RF_TX_Over_Flag == 0)
                 ;
-            
+
             // Radio.Send(radio_send_msg.buffer, radio_send_msg.payloadsize);
             // while (RF_TX_Over_Flag == 0)
             //     ;
-            message_green_led();
+            // message_green_led();
             // DelayMs(emer_sleep_time_ms);
             // radio_send_mayday(MY_ID);
             break;
@@ -539,7 +539,7 @@ void radio_state_check(States_t Radiostate)
             // Radio.Send(radio_send_msg.buffer, radio_send_msg.payloadsize);
             // while (RF_TX_Over_Flag == 0)
             //     ;
-            message_green_led();
+            // message_green_led();
             // DelayMs(emer_sleep_time_ms);
             // radio_send_mayday(MY_ID);
             break;

@@ -154,7 +154,7 @@ void UartEnterLowPowerStopMode(void);
 void UartLowPowerHandler(void);
 void DisableLowPowerDuringTask(bool status);
 void McuEnterLowPowerStopMode(void);
-
-extern volatile bool McuStopFlag;
+void RTC_Config(void);
+ extern volatile bool McuStopFlag;
 
 #endif // __BOARD_H__

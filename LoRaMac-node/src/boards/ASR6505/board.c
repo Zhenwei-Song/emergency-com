@@ -512,7 +512,26 @@ void McuEnterLowPowerStopMode(void)
     //     enableInterrupts();
 
     // 加上这句才能真正进入超低功耗模式
-    PWR_UltraLowPowerCmd(ENABLE);
+    //PWR_UltraLowPowerCmd(ENABLE);
     // 进入停机模式
-    halt();
+    //halt();
+}
+
+/**
+ * @description: RTC时钟设置，用于低功耗模式周期性唤醒
+ * @return {*}
+ */
+void RTC_Config(void)
+{
+    CLK_LSICmd(ENABLE);                                        // 使能LSI
+    CLK_RTCClockConfig(CLK_RTCCLKSource_LSI, CLK_RTCCLKDiv_1); // RTC时钟源LSI, 1分频=38K
+    while (CLK_GetFlagStatus(CLK_FLAG_LSIRDY) == RESET)
+        ; // 等待LSI就绪
+    RTC_WakeUpCmd(DISABLE);
+    CLK_PeripheralClockConfig(CLK_Peripheral_RTC, ENABLE); // RTC时钟
+    RTC_WakeUpClockConfig(RTC_WakeUpClock_RTCCLK_Div16);  // 38K/16=2.375k=0.421ms
+    RTC_ITConfig(RTC_IT_WUT, ENABLE);                      // 开启中断
+    RTC_SetWakeUpCounter(2375 * 2 * 5);                    // 2375*0.421=1S左右  5ss
+                                                           // ITC_SetSoftwarePriority(RTC_CSSLSE_IRQn, ITC_PriorityLevel_3);// 优先级
+    enableInterrupts();
 }

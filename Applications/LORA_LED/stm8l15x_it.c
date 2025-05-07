@@ -119,11 +119,12 @@ INTERRUPT_HANDLER(DMA1_CHANNEL2_3_IRQHandler, 3)
     it is recommended to set a breakpoint on the following instruction.
   */
 
-INTERRUPT_HANDLER(RTC_CSSLSE_IRQHandler, 4)
-{
-    RTC_ClearITPendingBit(RTC_IT_ALRA);
-    // RTC_Alarm_IRQHandler();
-}
+// INTERRUPT_HANDLER(RTC_CSSLSE_IRQHandler, 4)
+// {
+//     //RTC_ClearITPendingBit(RTC_IT_ALRA);
+//     // RTC_Alarm_IRQHandler();
+//     RTC_ClearITPendingBit(RTC_IT_WUT);
+// }
 
 /**
  * @brief External IT PORTE/F and PVD Interrupt routine.
@@ -167,14 +168,14 @@ extern void Key_Detected(void);
  * @param  None
  * @retval None
  */
-INTERRUPT_HANDLER(EXTI0_IRQHandler, 8)
-{
-     //LED_R_Bat_On;
-     //LED_R_Bat_Off;
-     //LED_G_Bat_On;
-     Key_Detected();
-     EXTI_ClearITPendingBit(EXTI_IT_Pin0);
-}
+// INTERRUPT_HANDLER(EXTI0_IRQHandler, 8)
+// {
+//      //LED_R_Bat_On;
+//      //LED_R_Bat_Off;
+//      //LED_G_Bat_On;
+//      Key_Detected();
+//      EXTI_ClearITPendingBit(EXTI_IT_Pin0);
+// }
 
 /**
  * @brief External IT PIN1 Interrupt routine.

@@ -2,7 +2,7 @@
  * @Author: Zhenwei Song zhenwei.song@qq.com
  * @Date: 2024-06-05 10:51:06
  * @LastEditors: Zhenwei Song zhenwei_song@foxmail.com
- * @LastEditTime: 2025-03-07 16:57:51
+ * @LastEditTime: 2025-05-07 15:45:17
  * @FilePath: \emergency com for git\MiddleWares\my_uart.c
  * @Description: 仅供学习交流使用
  * Copyright (c) 2024 by Zhenwei Song, All Rights Reserved.
@@ -33,9 +33,11 @@ extern bool it_key_up_flag;
 extern uint8_t keyState;
 extern volatile bool keyDownFlag;
 
-extern bool low_power_flag;
-extern bool wake_flag;
+extern volatile bool low_power_flag;
+extern volatile bool wake_flag;
 extern uint32_t sleep_time;
+
+volatile bool key_wake_flag = false;
 
 #define rx_buf_size 256 // 原0x200
 static uint8_t rx_buf[rx_buf_size] = {0};
@@ -795,6 +797,8 @@ static void process_c_frame(const uint8_t *frame_data)
         radio_send_mayday(MY_ID);
         uart_send_BOK();
         TIM4_DeInit();
+
+#if 0
         low_power_flag = true;
         TIM4_1s_Init(); // 开启1s定时器
 
@@ -832,6 +836,37 @@ static void process_c_frame(const uint8_t *frame_data)
                 halt();
             }
         }
+#else                              // 进入紧急模式（低功耗）
+        disableInterrupts();       // 关总中断
+        PWR_FastWakeUpCmd(ENABLE); // 设置快速呼醒
+        RTC_Config();
+        McuEnterLowPowerStopMode();
+        EXIT_KEY_Init();              // 使能按键中断
+        enableInterrupts();           // 打开系统总中断
+        //PWR_UltraLowPowerCmd(ENABLE); // 超低功耗
+        while (1) {
+            RTC_ITConfig(RTC_IT_WUT, ENABLE); // 唤醒定时器中断使能
+            RTC_WakeUpCmd(ENABLE);            // RTC唤醒使能
+            PWR_UltraLowPowerCmd(ENABLE); // 超低功耗
+            halt();                           // 等待外部中断线号4，呼醒低功耗
+            RTC_WakeUpCmd(DISABLE);
+            if (wake_flag == true) {
+                wake_flag = false;
+                // if (RadioState == TX) { // 上个指令没发完
+                //     error_flag = true;
+                //     goto ERROR_FLAG;
+                // }
+                radio_send_mayday(MY_ID);
+                radio_state_check(RadioState);
+            }
+            if (key_wake_flag == true) {
+                PCTL_MCU_Off;
+                keyState = 0;
+                while (1) // 关机
+                    ;
+            }
+        }
+#endif
     }
     else if (strcmp((const char *)frame_data, (const char *)Controller) == 0) {
         is_controller = true;
@@ -1013,3 +1048,25 @@ INTERRUPT_HANDLER(TIM2_CC_USART2_RX_IRQHandler, 20)
 }
 
 #endif
+
+INTERRUPT_HANDLER(RTC_CSSLSE_IRQHandler, 4)
+{
+    RTC_ClearITPendingBit(RTC_IT_WUT);
+    wake_flag = true;
+}
+
+// INTERRUPT_HANDLER(EXTI1_IRQHandler, 9)
+// {
+//     EXTI_ClearITPendingBit(EXTI_IT_Pin1);
+//     key_wake_flag = true;
+//     // batteryCharging=true;
+// }
+INTERRUPT_HANDLER(EXTI0_IRQHandler, 8)
+{
+     //LED_R_Bat_On;
+     //LED_R_Bat_Off;
+     //LED_G_Bat_On;
+     //Key_Detected();
+     EXTI_ClearITPendingBit(EXTI_IT_Pin0);
+     key_wake_flag = true;
+}

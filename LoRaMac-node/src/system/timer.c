@@ -24,8 +24,8 @@ volatile bool keyDownFlag = false;
 volatile bool it_key_up_flag = false;
 volatile uint8_t keyState = 0;
 
-bool low_power_flag = false;
-bool wake_flag = false;
+volatile bool low_power_flag = false;
+volatile bool wake_flag = false;
 uint32_t sleep_time = 0;
 
 volatile uint32_t Stanby_10ms_Cnt = Stanby_10ms_max;
@@ -273,11 +273,7 @@ INTERRUPT_HANDLER(TIM4_UPD_OVF_TRG_IRQHandler, 25)
         time_10s_cnt++;
         time_1s_cnt++;
         time_4s_cnt++;
-        // if (time_10s_cnt == SYN_10ms_max) // 每SYN_10ms_max广播一次同步信息
-        // {
-        //     time_10s_cnt = 0;
-        //     Req_Send_Time_SYN_Frame = 1;
-        // }
+
         if (time_10s_cnt == 1000) // 10s
             time_10s_cnt = 0;
         if (time_1s_cnt == 100) // 1s
@@ -285,73 +281,10 @@ INTERRUPT_HANDLER(TIM4_UPD_OVF_TRG_IRQHandler, 25)
         if (time_4s_cnt == 400) // 4s
             time_4s_cnt = 0;
 
-        // Select_light(light_Num);
-        if (!McuStopFlag) {
+        if (!McuStopFlag) { //LED显示
             if (led_busy_flag == false && working_flag == true)
                 Flash_Status_LED();
-            // Flash_Status_LED();
-            //  if (lightEnable) {
-            //      switch (light_Num) {
-            //      case 0:
-            //          ledRB_toggle();
-            //          break;
-            //      case 1:
-            //          ledG_toggle();
-            //          break;
-            //      case 2:
-            //          ledB_toggle();
-            //          break;
-            //      case 3:
-            //          ledY_toggle();
-            //          break;
-            //      case 4:
-            //          ledR_toggle();
-            //          break;
-            //      case 5:
-            //          ledG_Fast_toggle();
-            //          break;
-            //      case 6:
-            //          ledB_Fast_toggle();
-            //          break;
-            //      case 7:
-            //          ledY_Fast_toggle();
-            //          break;
-            //      case 8:
-            //          ledR_Fast_toggle();
-            //          break;
-            //      case 9:
-            //          ledG_LR_toggle();
-            //          break;
-            //      case 10:
-            //          ledB_LR_toggle();
-            //          break;
-            //      case 11:
-            //          ledY_LR_toggle();
-            //          break;
-            //      case 12:
-            //          ledR_LR_toggle();
-            //          break;
-            //      case 13:
-            //          ledGY_toggle();
-            //          break;
-            //      case 14:
-            //          ledBY_toggle();
-            //          break;
-            //      case 15:
-            //          ledRY_toggle();
-            //          break;
-            //      default:
-            //          all_light_Off();
-            //          break;
-            //      }
-            //  }
-            //  else {
-            //      // all_light_Off();
-            //      lightEnable = false;
-            //      // LED_G1_Off;LED_G2_Off;
-            //      // LED_B1_Off;LED_B2_Off;
-            //      // LED_R1_Off;LED_R2_Off;
-            //  }
+
         }
     }
 }
